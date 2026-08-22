@@ -212,79 +212,69 @@ The interactive dashboard is organized into 6 core operational modules:
 
 ---
 
-## 🚀 Setup, Local Execution & GitHub Deployment
+## ⚡ Quick Start & Local Setup Guide
 
-### Prerequisites
-- Python 3.10+
-- Git installed on your system
-- MySQL Server (Optional, automated SQLite engine fallback included)
+Follow these 4 simple steps to set up and run **Cart2Insights** on any local machine after cloning from GitHub:
 
 ---
 
-### Step 1: Virtual Environment Setup & Dependencies
-
-> [!NOTE]
-> Local virtual environments (such as `.venv64` or `.venv`) are explicitly listed in `.gitignore` and are **not pushed to GitHub**. Every developer/user clones the repository and creates their own local virtual environment following the steps below.
-
+### 1️⃣ Clone Repository & Create Virtual Environment
 ```bash
-# 1. Create a virtual environment named .venv64
+# 1. Clone the repository
+git clone https://github.com/harshar007/GUVI_PROJECT-1.git
+cd GUVI_PROJECT-1
+
+# 2. Create local 64-bit virtual environment
 python -m venv .venv64
 
-# 2. Activate the virtual environment
+# 3. Activate virtual environment
 # Windows (PowerShell):
 .venv64\Scripts\Activate.ps1
 # Windows (CMD):
 .venv64\Scripts\activate.bat
-# Linux / macOS:
+# macOS / Linux:
 source .venv64/bin/activate
 
-# 3. Install project dependencies
+# 4. Install required dependencies
 pip install -r requirements.txt
 ```
 
 ---
 
-### Step 2: Data Preprocessing & SQLite Database Build
-Run the standard data cleaning and feature engineering pipeline to generate `data/cleaned/ecommerce.db`:
+### 2️⃣ Build Database & Run Data Pipeline
+Runs data cleaning, feature engineering, statistical test computation, and builds `data/cleaned/ecommerce.db`:
 ```bash
 python process_data_std.py
 ```
 
 ---
 
-### Step 3: Generate Clean Jupyter Notebooks
-Build/sync all 7 formatted analysis notebooks in the `notebooks/` directory:
+### 3️⃣ Generate Analysis Notebooks
+Syncs all 7 structured analysis notebooks inside the `notebooks/` folder:
 ```bash
 python create_notebooks.py
 ```
 
 ---
 
-### Step 4: Launch Interactive Streamlit Dashboard
-Start the multi-page analytics dashboard in your browser:
+### 4️⃣ Launch Streamlit Web Application
+Launches the interactive 6-module dashboard in your default browser at `http://localhost:8501`:
 ```bash
 streamlit run streamlit/app.py
 ```
 
 ---
 
-### Step 5: Push Entire Project to GitHub
-
-Follow these steps to initialize and push your repository to GitHub:
+## 🛠️ Repository Maintenance & Git Commands
 
 ```bash
-# 1. Stage all project files (unusual/temp files are automatically excluded via .gitignore)
+# Check status of untracked and modified files
+git status
+
+# Stage changes & commit
 git add .
+git commit -m "Update project documentation and scripts"
 
-# 2. Create initial commit
-git commit -m "Initial commit: Cart2Insights E-Commerce Analytics Solution"
-
-# 3. Rename branch to main (if not already main)
-git branch -M main
-
-# 4. Add your GitHub repository remote URL (replace with your repository link)
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME.git
-
-# 5. Push code to GitHub
-git push -u origin main
+# Push to GitHub main branch
+git push origin main
 ```
