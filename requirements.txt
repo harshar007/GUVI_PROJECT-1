@@ -1,0 +1,13 @@
+pandas>=2.0.0,<3.0.0
+numpy>=1.24.0
+sqlalchemy>=2.0.0
+pymysql>=1.1.0
+scipy>=1.10.0
+statsmodels>=0.14.0
+plotly>=5.15.0
+streamlit>=1.25.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+python-dotenv>=1.0.0
+nbformat>=5.9.0
+ipykernel>=6.0.0

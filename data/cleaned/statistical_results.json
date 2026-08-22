@@ -1,0 +1,26 @@
+{
+    "t_test": {
+        "title": "Delivery Delay vs Customer Review Score",
+        "method": "Independent Two-Sample T-Test",
+        "t_stat": -89.55177961956551,
+        "p_value": 0.0,
+        "ontime_mean": 4.293736817766549,
+        "delayed_mean": 2.5664935064935066,
+        "conclusion": "Delayed orders receive significantly lower review scores compared to on-time orders (p < 0.001)."
+    },
+    "anova": {
+        "title": "Product Category vs Order Value",
+        "method": "One-Way ANOVA",
+        "f_stat": 310.29875832410255,
+        "p_value": 0.0,
+        "conclusion": "Average order spending varies significantly across top product categories (p < 0.001)."
+    },
+    "chi_square": {
+        "title": "Payment Method vs Order Status",
+        "method": "Chi-Square Test of Independence",
+        "chi2_stat": 677.0831369637666,
+        "p_value": 1.2047397488650834e-124,
+        "dof": 28,
+        "conclusion": "Significant association exists between customer payment methods and order statuses (p < 0.001)."
+    }
+}
