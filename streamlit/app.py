@@ -1,4 +1,12 @@
+import sys
+import subprocess
 import streamlit as st
+
+if __name__ == "__main__":
+    if not st.runtime.exists():
+        subprocess.call([sys.executable, "-m", "streamlit", "run", __file__, "--server.headless", "true"] + sys.argv[1:])
+        sys.exit()
+
 import pandas as pd
 import json
 import os
@@ -15,7 +23,6 @@ from utils import (
 
 st.set_page_config(
     page_title="Cart2Insights | E-Commerce Analytics",
-    page_icon="🛒",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -24,22 +31,21 @@ apply_custom_css()
 
 # Header Hero Banner
 st.markdown("""
-    <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); 
-                border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 28px 32px; margin-bottom: 28px;
-                box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);">
+    <div style="background: #F9FAFB; 
+                border: 1px solid #E5E7EB; border-radius: 16px; padding: 24px 28px; margin-bottom: 24px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
             <div>
                 <span class="badge badge-primary">GUVI / HCL CAPSTONE SOLUTION</span>
-                <h1 style="background: linear-gradient(135deg, #FFFFFF 0%, #38BDF8 100%); -webkit-background-clip: text; 
-                           -webkit-text-fill-color: transparent; font-size: 2.4rem; font-weight: 800; margin: 10px 0 6px 0;">
-                    🛒 Cart2Insights: E-Commerce Analytics Platform
+                <h1 style="color: #000000; font-size: 2.2rem; font-weight: 800; margin: 10px 0 6px 0;">
+                    Cart2Insights: E-Commerce Analytics Platform
                 </h1>
-                <p style="color: #94A3B8; font-size: 1.05rem; font-weight: 500; margin: 0;">
+                <p style="color: #374151; font-size: 1.05rem; font-weight: 500; margin: 0;">
                     Decoding E-Commerce Sales Performance, Operational Logistics, Customer Retention & Statistical Insights
                 </p>
             </div>
             <div style="margin-top: 10px;">
-                <span class="badge badge-success">⚡ Live Database Active</span>
+                <span class="badge badge-success">Live Database Active</span>
             </div>
         </div>
     </div>
@@ -48,29 +54,29 @@ st.markdown("""
 # Database Engine Status
 engine, db_type = get_db_engine()
 st.sidebar.markdown(f"""
-    <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 14px; margin-bottom: 20px;">
-        <div style="color: #94A3B8; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Connected Engine</div>
-        <div style="color: #38BDF8; font-size: 1.1rem; font-weight: 800; margin-top: 2px;">⚡ {db_type} Database</div>
+    <div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 10px; padding: 12px; margin-bottom: 16px;">
+        <div style="color: #6B7280; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Connected Engine</div>
+        <div style="color: #111827; font-size: 1.05rem; font-weight: 800; margin-top: 2px;">{db_type} Database</div>
     </div>
 """, unsafe_allow_html=True)
 
 # Navigation Sidebar
-st.sidebar.markdown("### 🧭 Operational Modules")
+st.sidebar.markdown("### Operational Modules")
 menu_option = st.sidebar.radio(
     "Select Dashboard View:",
     [
-        "📊 Business Overview",
-        "📈 Sales Analysis",
-        "👥 Customer Analysis",
-        "🏬 Seller & Product Performance",
-        "🚚 Delivery & Operations",
-        "🧪 Statistical Hypothesis Testing"
+        "Business Overview",
+        "Sales Analysis",
+        "Customer Analysis",
+        "Seller & Product Performance",
+        "Delivery & Operations",
+        "Statistical Hypothesis Testing"
     ]
 )
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("""
-    <div style="color: #64748B; font-size: 0.8rem; text-align: center;">
+    <div style="color: #6B7280; font-size: 0.8rem; text-align: center;">
         Developed for <b>GUVI & HCL Tech Capstone</b><br/>
         Python • SQL • Pandas • Plotly • Streamlit
     </div>
@@ -79,8 +85,8 @@ st.sidebar.markdown("""
 # ---------------------------------------------------------
 # SECTION 1: BUSINESS OVERVIEW
 # ---------------------------------------------------------
-if menu_option == "📊 Business Overview":
-    st.markdown("### 📊 Executive KPIs & Performance Summary")
+if menu_option == "Business Overview":
+    st.markdown("### Executive KPIs & Performance Summary")
     
     try:
         overview_df = run_query(QUERY_BUSINESS_OVERVIEW)
@@ -89,32 +95,32 @@ if menu_option == "📊 Business Overview":
             col1, col2, col3, col4, col5, col6 = st.columns(6)
             
             with col1:
-                render_metric_card("Total Revenue", f"{row['total_revenue']:,.2f}", prefix="$", icon="💰", subtitle="Net Sales Revenue")
+                render_metric_card("Total Revenue", f"{row['total_revenue']:,.2f}", prefix="$", subtitle="Net Sales Revenue")
             with col2:
-                render_metric_card("Total Orders", f"{row['total_orders']:,}", icon="📦", subtitle="Fulfilled Orders")
+                render_metric_card("Total Orders", f"{row['total_orders']:,}", subtitle="Fulfilled Orders")
             with col3:
-                render_metric_card("Total Customers", f"{row['total_customers']:,}", icon="👥", subtitle="Unique Customers")
+                render_metric_card("Total Customers", f"{row['total_customers']:,}", subtitle="Unique Customers")
             with col4:
-                render_metric_card("Total Sellers", f"{row['total_sellers']:,}", icon="🏬", subtitle="Active Merchants")
+                render_metric_card("Total Sellers", f"{row['total_sellers']:,}", subtitle="Active Merchants")
             with col5:
-                render_metric_card("Avg Order Value", f"{row['average_order_value']:.2f}", prefix="$", icon="💳", subtitle="Revenue per Order")
+                render_metric_card("Avg Order Value", f"{row['average_order_value']:.2f}", prefix="$", subtitle="Revenue per Order")
             with col6:
-                render_metric_card("Avg Rating", f"{row['avg_review_score']:.2f}", suffix=" / 5", icon="⭐", subtitle="Customer Score")
+                render_metric_card("Avg Rating", f"{row['avg_review_score']:.2f}", suffix=" / 5", subtitle="Customer Score")
         
         st.markdown("<br/>", unsafe_allow_html=True)
-        st.markdown("### 📈 Monthly Order Volume & Revenue Growth Trends")
+        st.markdown("### Monthly Order Volume & Revenue Growth Trends")
         monthly_df = run_query(QUERY_MONTHLY_REVENUE)
         if not monthly_df.empty:
             col_chart1, col_chart2 = st.columns(2)
             with col_chart1:
                 st.plotly_chart(
                     plot_line_chart(monthly_df, 'month_year', 'monthly_revenue', "Monthly Revenue Trend ($)", "Month", "Revenue ($)"),
-                    use_container_width=True
+                    width="stretch"
                 )
             with col_chart2:
                 st.plotly_chart(
                     plot_bar_chart(monthly_df, 'month_year', 'orders_count', "Monthly Fulfilled Orders Count", color_col='orders_count'),
-                    use_container_width=True
+                    width="stretch"
                 )
     except Exception as e:
         st.error(f"Error loading Business Overview metrics: {e}")
@@ -122,8 +128,8 @@ if menu_option == "📊 Business Overview":
 # ---------------------------------------------------------
 # SECTION 2: SALES ANALYSIS
 # ---------------------------------------------------------
-elif menu_option == "📈 Sales Analysis":
-    st.markdown("### 📈 Sales & Product Category Revenue Breakdown")
+elif menu_option == "Sales Analysis":
+    st.markdown("### Sales & Product Category Revenue Breakdown")
     
     col_a, col_b = st.columns(2)
     with col_a:
@@ -142,7 +148,7 @@ elif menu_option == "📈 Sales Analysis":
                 use_container_width=True
             )
 
-    st.markdown("### 🔥 Top Best-Selling Products Leaderboard")
+    st.markdown("### Top Best-Selling Products Leaderboard")
     top_prod_df = run_query(QUERY_TOP_PRODUCTS)
     if not top_prod_df.empty:
         st.dataframe(top_prod_df, use_container_width=True, height=360)
@@ -150,8 +156,8 @@ elif menu_option == "📈 Sales Analysis":
 # ---------------------------------------------------------
 # SECTION 3: CUSTOMER ANALYSIS
 # ---------------------------------------------------------
-elif menu_option == "👥 Customer Analysis":
-    st.markdown("### 👥 Customer Retention & Spending Segmentation")
+elif menu_option == "Customer Analysis":
+    st.markdown("### Customer Retention & Spending Segmentation")
     
     col_c1, col_c2 = st.columns(2)
     with col_c1:
@@ -172,15 +178,15 @@ elif menu_option == "👥 Customer Analysis":
                 use_container_width=True
             )
 
-    st.markdown("### 💎 Top High-Value VIP Customers")
+    st.markdown("### Top High-Value VIP Customers")
     if not spend_df.empty:
         st.dataframe(spend_df.head(15), use_container_width=True, height=380)
 
 # ---------------------------------------------------------
 # SECTION 4: SELLER & PRODUCT PERFORMANCE
 # ---------------------------------------------------------
-elif menu_option == "🏬 Seller & Product Performance":
-    st.markdown("### 🏬 Merchant & Seller Performance Dashboard")
+elif menu_option == "Seller & Product Performance":
+    st.markdown("### Merchant & Seller Performance Dashboard")
     
     seller_df = run_query(QUERY_SELLER_PERFORMANCE)
     if not seller_df.empty:
@@ -188,14 +194,14 @@ elif menu_option == "🏬 Seller & Product Performance":
             plot_bar_chart(seller_df, 'seller_id', 'total_revenue', "Top Sellers by Revenue ($)", color_col='orders_fulfilled'),
             use_container_width=True
         )
-        st.markdown("### 🏆 Seller Scoreboard & Fulfillment Metrics")
+        st.markdown("### Seller Scoreboard & Fulfillment Metrics")
         st.dataframe(seller_df, use_container_width=True, height=380)
 
 # ---------------------------------------------------------
 # SECTION 5: DELIVERY & OPERATIONS
 # ---------------------------------------------------------
-elif menu_option == "🚚 Delivery & Operations":
-    st.markdown("### 🚚 Logistics & Delivery Speed Metrics")
+elif menu_option == "Delivery & Operations":
+    st.markdown("### Logistics & Delivery Speed Metrics")
     
     delivery_df = run_query(QUERY_DELIVERY_PERFORMANCE)
     if not delivery_df.empty:
@@ -203,14 +209,14 @@ elif menu_option == "🚚 Delivery & Operations":
             plot_bar_chart(delivery_df, 'customer_state', 'avg_delivery_days', "Average Delivery Duration per State (Days)"),
             use_container_width=True
         )
-        st.markdown("### 📍 State-Level Delivery Performance Details")
+        st.markdown("### State-Level Delivery Performance Details")
         st.dataframe(delivery_df, use_container_width=True, height=380)
 
 # ---------------------------------------------------------
 # SECTION 6: STATISTICAL HYPOTHESIS TESTING
 # ---------------------------------------------------------
-elif menu_option == "🧪 Statistical Hypothesis Testing":
-    st.markdown("### 🧪 Statistical Analysis & Hypothesis Testing")
+elif menu_option == "Statistical Hypothesis Testing":
+    st.markdown("### Statistical Analysis & Hypothesis Testing")
     
     col_e1, col_e2 = st.columns(2)
     with col_e1:
@@ -230,33 +236,33 @@ elif menu_option == "🧪 Statistical Hypothesis Testing":
             )
 
     st.markdown("<br/>", unsafe_allow_html=True)
-    st.markdown("### 📋 Statistical Test Results & Rigorous Verification")
+    st.markdown("### Statistical Test Results & Rigorous Verification")
     
     stats_json_path = os.path.join(os.path.dirname(__file__), "..", "data", "cleaned", "statistical_results.json")
     if os.path.exists(stats_json_path):
         with open(stats_json_path, "r", encoding="utf-8") as f:
             stats_data = json.load(f)
             
-        t1, t2, t3 = st.tabs(["1️⃣ Welch's T-Test (Delivery vs Rating)", "2️⃣ One-Way ANOVA (Category vs AOV)", "3️⃣ Chi-Square Test (Payment vs Status)"])
+        t1, t2, t3 = st.tabs(["1. Welch's T-Test (Delivery vs Rating)", "2. One-Way ANOVA (Category vs AOV)", "3. Chi-Square Test (Payment vs Status)"])
         
         with t1:
             tt = stats_data.get("t_test", {})
-            st.markdown(f"#### 📊 {tt.get('title')}")
+            st.markdown(f"#### {tt.get('title')}")
             st.markdown(f"**Statistical Method:** `{tt.get('method')}`")
             st.markdown(f"**T-Statistic:** `{tt.get('t_stat'):.4f}` | **P-Value:** `{tt.get('p_value'):.4e}`")
             st.markdown(f"**On-Time Orders Mean Rating:** `{tt.get('ontime_mean'):.2f} / 5.0` | **Delayed Orders Mean Rating:** `{tt.get('delayed_mean'):.2f} / 5.0`")
-            st.info(f"💡 **Business Decision & Insight:** {tt.get('conclusion')}")
+            st.info(f"**Business Decision & Insight:** {tt.get('conclusion')}")
 
         with t2:
             an = stats_data.get("anova", {})
-            st.markdown(f"#### 📊 {an.get('title')}")
+            st.markdown(f"#### {an.get('title')}")
             st.markdown(f"**Statistical Method:** `{an.get('method')}`")
             st.markdown(f"**F-Statistic:** `{an.get('f_stat'):.4f}` | **P-Value:** `{an.get('p_value'):.4e}`")
-            st.info(f"💡 **Business Decision & Insight:** {an.get('conclusion')}")
+            st.info(f"**Business Decision & Insight:** {an.get('conclusion')}")
 
         with t3:
             cs = stats_data.get("chi_square", {})
-            st.markdown(f"#### 📊 {cs.get('title')}")
+            st.markdown(f"#### {cs.get('title')}")
             st.markdown(f"**Statistical Method:** `{cs.get('method')}`")
-            st.markdown(f"**Chi-Square Statistic ($\chi^2$):** `{cs.get('chi2_stat'):.4f}` | **Degrees of Freedom (dof):** `{cs.get('dof')}` | **P-Value:** `{cs.get('p_value'):.4e}`")
-            st.info(f"💡 **Business Decision & Insight:** {cs.get('conclusion')}")
+            st.markdown(fr"**Chi-Square Statistic ($\chi^2$):** `{cs.get('chi2_stat'):.4f}` | **Degrees of Freedom (dof):** `{cs.get('dof')}` | **P-Value:** `{cs.get('p_value'):.4e}`")
+            st.info(f"**Business Decision & Insight:** {cs.get('conclusion')}")

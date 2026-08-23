@@ -110,19 +110,14 @@ erDiagram
 
 ---
 
-## 📂 Project Structure
+## 📂 Clean Project Structure
 
 ```
 guvi project 1/
-├── .env                          # Database credentials (MySQL & SQLite fallback)
-├── process_data_std.py           # Pipeline for data cleaning, features, & DB ingestion
-├── create_notebooks.py           # Notebook generator script
-├── requirements.txt              # Project dependencies
-├── README.md                     # Comprehensive documentation
-├── data/
+├── data/                         # Datasets & Database Storage
 │   ├── raw/                      # 9 Raw Olist CSV datasets
 │   └── cleaned/                  # Sanitized CSVs, statistical_results.json & ecommerce.db
-├── notebooks/
+├── notebooks/                    # Sequential Data Science & SQL Notebooks
 │   ├── 01_data_understanding.ipynb
 │   ├── 02_data_quality_analysis.ipynb
 │   ├── 03_data_cleaning.ipynb
@@ -130,12 +125,34 @@ guvi project 1/
 │   ├── 05_feature_engineering.ipynb
 │   ├── 06_eda.ipynb
 │   └── 07_statistical_analysis.ipynb
-└── streamlit/
-    ├── app.py                    # Multi-module Streamlit Dashboard Application
-    ├── database.py               # Database engine & connection manager
-    ├── queries.py                # Business SQL queries (CTEs, Window funcs, Joins)
-    └── utils.py                  # Plotly chart builders & modern UI styling
+├── streamlit/                    # Interactive Analytics Dashboard Application
+│   ├── app.py                    # Multi-module Streamlit Dashboard Application
+│   ├── database.py               # Database engine & connection manager
+│   ├── queries.py                # SQL query definitions
+│   └── utils.py                  # Plotly chart builders & modern UI design system
+├── README.md                     # Comprehensive Project Documentation
+├── .env                          # Environment variables & database configuration
+├── Dockerfile                    # Container image build configuration
+├── docker-compose.yml            # Multi-container orchestration specification
+└── .dockerignore                 # Excluded container build files
 ```
+
+---
+
+## 🐳 Why Docker? (Reusability & Deployment)
+
+Docker is integrated into the project architecture to maximize **reusability, portability, and production deployment**:
+
+1. **Zero-Setup Environment Reusability**:
+   - Eliminates `"works on my machine"` errors.
+   - Packages Python 3.12, system libraries, Pandas, Plotly, Streamlit, and SQLite database into a self-contained container.
+   - Guarantees identical execution regardless of the host OS (Windows, macOS, Linux).
+
+2. **One-Command Deployment (`docker-compose up`)**:
+   - Anyone can launch the entire dashboard platform in seconds using `docker-compose up -d --build` without manually installing Python dependencies.
+
+3. **Production & Cloud Readiness**:
+   - Ready for instant deployment to cloud platforms (AWS ECS, Google Cloud Run, Azure App Service, Heroku).
 
 ---
 
@@ -259,8 +276,22 @@ python create_notebooks.py
 
 ### 4️⃣ Launch Streamlit Web Application
 Launches the interactive 6-module dashboard in your default browser at `http://localhost:8501`:
+
+**If Virtual Environment is Activated:**
 ```bash
 streamlit run streamlit/app.py
+```
+
+**If using Windows (PowerShell) directly:**
+```powershell
+.\.venv64\Scripts\streamlit run streamlit/app.py
+# OR using python module
+.\.venv64\Scripts\python -m streamlit run streamlit/app.py
+```
+
+**If using Windows (CMD):**
+```cmd
+.venv64\Scripts\streamlit run streamlit/app.py
 ```
 
 ---
