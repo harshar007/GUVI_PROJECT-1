@@ -265,6 +265,44 @@ streamlit run streamlit/app.py
 
 ---
 
+## 🐳 Docker Deployment & Easy Deploy Testing
+
+You can easily containerize and test **Cart2Insights** using Docker or Docker Compose. The container creates and installs all dependencies inside an isolated `.venv64` virtual environment (`/app/.venv64`).
+
+### 🚀 Quick Start with Docker Compose (Recommended)
+
+Run the application with one command:
+```bash
+docker-compose up --build
+```
+Open [http://localhost:8501](http://localhost:8501) in your browser.
+
+- **Standalone Mode (Default)**: Automatically uses the embedded SQLite database (`data/cleaned/ecommerce.db`).
+- **With MySQL Container**: To test with a live containerized MySQL database, run:
+```bash
+docker-compose --profile with-mysql up --build
+```
+
+---
+
+### 📦 Manual Build & Run with Docker CLI
+
+```bash
+# 1. Build Docker image
+docker build -t cart2insights .
+
+# 2. Run container mapping port 8501
+docker run -d -p 8501:8501 --name cart2insights-app cart2insights
+
+# 3. Check logs
+docker logs -f cart2insights-app
+
+# 4. Stop container
+docker stop cart2insights-app && docker rm cart2insights-app
+```
+
+---
+
 ## 🛠️ Repository Maintenance & Git Commands
 
 ```bash
@@ -278,3 +316,4 @@ git commit -m "Update project documentation and scripts"
 # Push to GitHub main branch
 git push origin main
 ```
+
