@@ -1,11 +1,20 @@
+import os
 import sys
-import subprocess
+
+# Ensure current folder and project root are in sys.path for seamless execution from any directory
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
+for p in [CURRENT_DIR, ROOT_DIR]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
 import streamlit as st
 
 if __name__ == "__main__":
     if not st.runtime.exists():
-        subprocess.call([sys.executable, "-m", "streamlit", "run", __file__, "--server.headless", "true"] + sys.argv[1:])
-        sys.exit()
+        import streamlit.web.cli as stcli
+        sys.argv = ["streamlit", "run", __file__]
+        sys.exit(stcli.main())
 
 import pandas as pd
 import json
@@ -54,11 +63,16 @@ st.markdown("""
 # Database Engine Status
 engine, db_type = get_db_engine()
 st.sidebar.markdown(f"""
-    <div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 10px; padding: 12px; margin-bottom: 16px;">
+    <div style="background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 10px; padding: 12px; margin-bottom: 12px;">
         <div style="color: #6B7280; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Connected Engine</div>
         <div style="color: #111827; font-size: 1.05rem; font-weight: 800; margin-top: 2px;">{db_type} Database</div>
     </div>
 """, unsafe_allow_html=True)
+
+if st.sidebar.button("🔄 Clear Cache & Reconnect", use_container_width=True):
+    st.cache_resource.clear()
+    st.cache_data.clear()
+    st.rerun()
 
 # Navigation Sidebar
 st.sidebar.markdown("### Operational Modules")

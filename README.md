@@ -275,61 +275,20 @@ python create_notebooks.py
 ---
 
 ### 4️⃣ Launch Streamlit Web Application
-Launches the interactive 6-module dashboard in your default browser at `http://localhost:8501`:
+Launches the interactive dashboard in your browser at `http://localhost:8501`.
 
-**If Virtual Environment is Activated:**
+**Easiest One-Line Command:**
 ```bash
+python run_app.py
+```
+
+**Alternative Commands:**
+```bash
+# Direct Streamlit CLI
 streamlit run streamlit/app.py
-```
 
-**If using Windows (PowerShell) directly:**
-```powershell
-.\.venv64\Scripts\streamlit run streamlit/app.py
-# OR using python module
-.\.venv64\Scripts\python -m streamlit run streamlit/app.py
-```
-
-**If using Windows (CMD):**
-```cmd
-.venv64\Scripts\streamlit run streamlit/app.py
-```
-
----
-
-## 🐳 Docker Deployment & Easy Deploy Testing
-
-You can easily containerize and test **Cart2Insights** using Docker or Docker Compose. The container creates and installs all dependencies inside an isolated `.venv64` virtual environment (`/app/.venv64`).
-
-### 🚀 Quick Start with Docker Compose (Recommended)
-
-Run the application with one command:
-```bash
-docker-compose up --build
-```
-Open [http://localhost:8501](http://localhost:8501) in your browser.
-
-- **Standalone Mode (Default)**: Automatically uses the embedded SQLite database (`data/cleaned/ecommerce.db`).
-- **With MySQL Container**: To test with a live containerized MySQL database, run:
-```bash
-docker-compose --profile with-mysql up --build
-```
-
----
-
-### 📦 Manual Build & Run with Docker CLI
-
-```bash
-# 1. Build Docker image
-docker build -t cart2insights .
-
-# 2. Run container mapping port 8501
-docker run -d -p 8501:8501 --name cart2insights-app cart2insights
-
-# 3. Check logs
-docker logs -f cart2insights-app
-
-# 4. Stop container
-docker stop cart2insights-app && docker rm cart2insights-app
+# Using Python executable
+python streamlit/app.py
 ```
 
 ---
