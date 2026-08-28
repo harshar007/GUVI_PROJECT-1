@@ -132,27 +132,49 @@ guvi project 1/
 │   └── utils.py                  # Plotly chart builders & modern UI design system
 ├── README.md                     # Comprehensive Project Documentation
 ├── .env                          # Environment variables & database configuration
-├── Dockerfile                    # Container image build configuration
-├── docker-compose.yml            # Multi-container orchestration specification
-└── .dockerignore                 # Excluded container build files
+├── Dockerfile                    # Container image build configuration for Streamlit app
+├── docker-compose.yml            # Multi-container orchestration (MySQL + Streamlit)
+├── .dockerignore                 # Excluded files from Docker context
+├── requirements.txt              # Python package dependencies
+└── run_app.py                    # Single launcher script
 ```
 
 ---
 
-## 🐳 Why Docker? (Reusability & Deployment)
+## 🐳 Running with Docker & Docker Compose
 
-Docker is integrated into the project architecture to maximize **reusability, portability, and production deployment**:
+Docker containerization connects the Streamlit analytics platform directly to your active host machine **MySQL database on port 3306** (`host.docker.internal`).
 
-1. **Zero-Setup Environment Reusability**:
-   - Eliminates `"works on my machine"` errors.
-   - Packages Python 3.12, system libraries, Pandas, Plotly, Streamlit, and SQLite database into a self-contained container.
-   - Guarantees identical execution regardless of the host OS (Windows, macOS, Linux).
+### Quick Start with Docker
 
-2. **One-Command Deployment (`docker-compose up`)**:
-   - Anyone can launch the entire dashboard platform in seconds using `docker-compose up -d --build` without manually installing Python dependencies.
+#### 1️⃣ Build & Launch Containers
+Run the following command in the project root directory:
+```bash
+docker-compose up -d --build
+```
 
-3. **Production & Cloud Readiness**:
-   - Ready for instant deployment to cloud platforms (AWS ECS, Google Cloud Run, Azure App Service, Heroku).
+- Access the live interactive dashboard at **`http://localhost:8502`**.
+
+#### 2️⃣ Check Container Logs
+```bash
+# View live application logs
+docker-compose logs -f web
+```
+
+#### 3️⃣ Stopping & Cleaning Up Containers
+```bash
+# Standard stop and tear down containers & networks
+docker-compose down
+
+# Stop containers without removing them
+docker-compose stop
+
+# Start stopped containers
+docker-compose start
+
+# Complete cleanup: stop and remove containers, networks, AND persistent database volumes
+docker-compose down -v
+```
 
 ---
 
@@ -229,11 +251,9 @@ The interactive dashboard is organized into 6 core operational modules:
 
 ---
 
-## ⚡ Quick Start & Local Setup Guide
+## ⚡ Local Setup Guide (Without Docker)
 
-Follow these 4 simple steps to set up and run **Cart2Insights** on any local machine after cloning from GitHub:
-
----
+Follow these steps to set up and run **Cart2Insights** on your local machine:
 
 ### 1️⃣ Clone Repository & Create Virtual Environment
 ```bash
@@ -241,14 +261,12 @@ Follow these 4 simple steps to set up and run **Cart2Insights** on any local mac
 git clone https://github.com/harshar007/GUVI_PROJECT-1.git
 cd GUVI_PROJECT-1
 
-# 2. Create local 64-bit virtual environment
+# 2. Create local virtual environment
 python -m venv .venv64
 
 # 3. Activate virtual environment
 # Windows (PowerShell):
 .venv64\Scripts\Activate.ps1
-# Windows (CMD):
-.venv64\Scripts\activate.bat
 # macOS / Linux:
 source .venv64/bin/activate
 
@@ -256,54 +274,28 @@ source .venv64/bin/activate
 pip install -r requirements.txt
 ```
 
----
+### 2️⃣ Launch Streamlit Application
 
-### 2️⃣ Build Database & Run Data Pipeline
-Runs data cleaning, feature engineering, statistical test computation, and builds `data/cleaned/ecommerce.db`:
-```bash
-python process_data_std.py
+**Primary Main Command (Direct Execution):**
+```powershell
+.\.venv64\Scripts\python.exe run_app.py
 ```
 
----
-
-### 3️⃣ Generate Analysis Notebooks
-Syncs all 7 structured analysis notebooks inside the `notebooks/` folder:
-```bash
-python create_notebooks.py
-```
-
----
-
-### 4️⃣ Launch Streamlit Web Application
-Launches the interactive dashboard in your browser at `http://localhost:8501`.
-
-**Easiest One-Line Command:**
+**Alternative Commands (If virtual environment is activated):**
 ```bash
 python run_app.py
 ```
-
-**Alternative Commands:**
-```bash
-# Direct Streamlit CLI
-streamlit run streamlit/app.py
-
-# Using Python executable
-python streamlit/app.py
-```
+Open **`http://localhost:8501`** in your browser.
 
 ---
 
 ## 🛠️ Repository Maintenance & Git Commands
 
 ```bash
-# Check status of untracked and modified files
-git status
-
 # Stage changes & commit
 git add .
-git commit -m "Update project documentation and scripts"
+git commit -m "Add Docker containerization setup and update documentation"
 
 # Push to GitHub main branch
 git push origin main
 ```
-

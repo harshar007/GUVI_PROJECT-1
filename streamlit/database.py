@@ -1,7 +1,6 @@
 import os
 import socket
 import logging
-import sqlite3
 import pandas as pd
 from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
@@ -19,9 +18,6 @@ MYSQL_USER = os.getenv("MYSQL_USER", "root")
 MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "root")
 MYSQL_DB = os.getenv("MYSQL_DB", "cart2insights_db")
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SQLITE_DB_PATH = os.path.abspath(os.path.join(BASE_DIR, "..", "data", "cleaned", "ecommerce.db"))
-
 def _is_mysql_available(host, port, timeout=0.5):
     """Probes MySQL host:port to check if connection is available before trying SQLAlchemy connection."""
     try:
@@ -34,30 +30,35 @@ def _is_mysql_available(host, port, timeout=0.5):
 
 def get_db_engine():
     """
-    Attempts connection to MySQL database if server port is open.
-    If MySQL server is unavailable or fails, gracefully falls back to SQLite engine instantly.
+    Connects strictly to MySQL database (MySQL Workbench / MySQL Server / Host MySQL).
+    Raises ConnectionError if MySQL host is unreachable or connection fails.
     """
-    if _is_mysql_available(MYSQL_HOST, MYSQL_PORT):
-        mysql_uri = f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}"
+    mysql_uri = f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}"
+    try:
+        engine = create_engine(mysql_uri, connect_args={"connect_timeout": 5})
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        return engine, "MySQL"
+    except Exception as e:
+        # Check if server is running without the target DB, attempt DB creation
         try:
-            engine = create_engine(mysql_uri, connect_args={"connect_timeout": 2})
-            with engine.connect() as conn:
-                conn.execute(text("SELECT 1"))
+            root_uri = f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}"
+            root_engine = create_engine(root_uri, connect_args={"connect_timeout": 5})
+            with root_engine.connect() as conn:
+                conn.execute(text(f"CREATE DATABASE IF NOT EXISTS {MYSQL_DB}"))
+            engine = create_engine(mysql_uri, connect_args={"connect_timeout": 5})
             return engine, "MySQL"
-        except Exception:
-            pass
-
-    # SQLite fallback engine with 30s timeout for concurrent process safety
-    engine = create_engine(
-        "sqlite://",
-        creator=lambda: sqlite3.connect(SQLITE_DB_PATH, timeout=30.0, check_same_thread=False)
-    )
-    return engine, "SQLite"
+        except Exception as err:
+            raise ConnectionError(
+                f"Could not connect to MySQL Database '{MYSQL_DB}' on {MYSQL_HOST}:{MYSQL_PORT}.\n"
+                f"Please ensure MySQL Server / Workbench is running and check your credentials in .env.\n"
+                f"Original Error: {err or e}"
+            )
 
 @st.cache_data(ttl=3600)
 def run_query(query_str, params=None):
     """
-    Executes a SQL query string using cached SQLAlchemy engine.
+    Executes a SQL query string using cached MySQL SQLAlchemy engine.
     Returns result as a Pandas DataFrame.
     """
     engine, _ = get_db_engine()
@@ -67,13 +68,9 @@ def run_query(query_str, params=None):
 
 def get_db_tables():
     """
-    Returns list of table names in the active database.
+    Returns list of table names in the active MySQL database.
     """
-    engine, db_type = get_db_engine()
-    if db_type == "SQLite":
-        query = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;"
-    else:
-        query = f"SELECT table_name FROM information_schema.tables WHERE table_schema='{MYSQL_DB}' ORDER BY table_name;"
+    query = f"SELECT table_name FROM information_schema.tables WHERE table_schema='{MYSQL_DB}' ORDER BY table_name;"
     df = run_query(query)
     if not df.empty:
         col = df.columns[0]

@@ -1,0 +1,34 @@
+# Virtual Environments
+.venv/
+.venv64/
+venv/
+env/
+ENV/
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+
+# IDE & Editor Settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git & CI/CD
+.git/
+.gitignore
+.gitattributes
+
+# Temporary files & Caches
+.uv_cache/
+tmp/
+*.log
+
+# Docker setup
+Dockerfile
+docker-compose.yml
+.dockerignore

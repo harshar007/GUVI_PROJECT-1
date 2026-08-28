@@ -14,7 +14,7 @@ SELECT
 # 2. Sales Analysis Queries
 QUERY_MONTHLY_REVENUE = """
 SELECT 
-    STRFTIME('%Y-%m', o.order_purchase_timestamp) AS month_year,
+    DATE_FORMAT(o.order_purchase_timestamp, '%Y-%m') AS month_year,
     COUNT(DISTINCT o.order_id) AS orders_count,
     ROUND(SUM(oi.price + oi.freight_value), 2) AS monthly_revenue
 FROM orders o
@@ -126,9 +126,9 @@ LIMIT 15;
 QUERY_DELIVERY_PERFORMANCE = """
 SELECT 
     c.customer_state,
-    ROUND(AVG(JULIANDAY(o.order_delivered_customer_date) - JULIANDAY(o.order_purchase_timestamp)), 2) AS avg_delivery_days,
-    SUM(CASE WHEN JULIANDAY(o.order_delivered_customer_date) > JULIANDAY(o.order_estimated_delivery_date) THEN 1 ELSE 0 END) AS delayed_orders,
-    SUM(CASE WHEN JULIANDAY(o.order_delivered_customer_date) <= JULIANDAY(o.order_estimated_delivery_date) THEN 1 ELSE 0 END) AS ontime_orders,
+    ROUND(AVG(DATEDIFF(o.order_delivered_customer_date, o.order_purchase_timestamp)), 2) AS avg_delivery_days,
+    SUM(CASE WHEN o.order_delivered_customer_date > o.order_estimated_delivery_date THEN 1 ELSE 0 END) AS delayed_orders,
+    SUM(CASE WHEN o.order_delivered_customer_date <= o.order_estimated_delivery_date THEN 1 ELSE 0 END) AS ontime_orders,
     COUNT(o.order_id) AS total_delivered_orders
 FROM orders o
 JOIN customers c ON o.customer_id = c.customer_id
@@ -141,7 +141,7 @@ ORDER BY avg_delivery_days ASC;
 QUERY_DELIVERY_DELAY_VS_RATING = """
 SELECT 
     CASE 
-        WHEN JULIANDAY(o.order_delivered_customer_date) > JULIANDAY(o.order_estimated_delivery_date) THEN 'Delayed'
+        WHEN o.order_delivered_customer_date > o.order_estimated_delivery_date THEN 'Delayed'
         ELSE 'On-Time'
     END AS delivery_status,
     COUNT(DISTINCT o.order_id) AS total_orders,
